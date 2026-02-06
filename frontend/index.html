@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>LoggerBuddy</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f6f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      background: white;
+      padding: 30px 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      max-width: 480px;
+      width: 100%;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+    input[type="text"] {
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 16px;
+    }
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    /* New UI additions */
+    .divider {
+      margin: 22px 0;
+      height: 1px;
+      background: #e6e9ef;
+    }
+    .row {
+      display: flex;
+      gap: 10px;
+    }
+    .btn-secondary {
+      background-color: #6c757d;
+      flex: 1;
+    }
+    .btn-secondary:hover {
+      background-color: #545b62;
+    }
+    .btn-outline {
+      background: white;
+      color: #007bff;
+      border: 1px solid #007bff;
+      flex: 1;
+    }
+    .btn-outline:hover {
+      background: #eaf2ff;
+    }
+    .logs-box {
+      margin-top: 14px;
+      background: #f8fafc;
+      border: 1px solid #e6e9ef;
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 13px;
+      color: #222;
+      max-height: 180px;
+      overflow: auto;
+      white-space: pre-wrap;
+      line-height: 1.4;
+    }
+    .status {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #666;
+      text-align: center;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 13px;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>LoggerBuddy 📘</h2>
+
+    <form action="http://192.168.199.136:5000/log" method="POST">
+      <input type="text" name="message" placeholder="Enter your log message..." required />
+      <button type="submit">Submit Log</button>
+    </form>
+
+    <div class="divider"></div>
+
+    <h3 style="margin:0 0 10px; color:#333; font-size:16px; text-align:center;">
+      View Recent Logs
+    </h3>
+
+    <div class="row">
+      <button class="btn-outline" id="btnPostgres" type="button">Recent (Postgres)</button>
+      <button class="btn-secondary" id="btnFile" type="button">Recent (File)</button>
+    </div>
+
+    <div class="logs-box" id="logsBox">Click a button to load logs...</div>
+    <div class="status" id="statusText"></div>
+
+    <div class="footer">
+      Built with ❤️ for #100DaysOfDevOps
+    </div>
+  </div>
+
+  <script>
+    const logsBox = document.getElementById("logsBox");
+    const statusText = document.getElementById("statusText");
+
+    async function fetchLogs(endpoint) {
+      try {
+        statusText.textContent = "Loading...";
+        logsBox.textContent = "";
+
+        const res = await fetch(`http://192.168.199.136:5000/${endpoint}`);
+        if (!res.ok) {
+          const txt = await res.text();
+          throw new Error(`Backend error (${res.status}): ${txt}`);
+        }
+
+        const data = await res.json();
+
+        // /recent returns objects; /recent-file returns strings
+        if (endpoint === "recent") {
+          if (!Array.isArray(data) || data.length === 0) {
+            logsBox.textContent = "No logs found in Postgres yet.";
+          } else {
+            logsBox.textContent = data
+              .map(x => `#${x.id}  ${x.created_at}\n${x.message}\n`)
+              .join("\n");
+          }
+        } else {
+          if (!Array.isArray(data) || data.length === 0) {
+            logsBox.textContent = "No logs found in file yet.";
+          } else {
+            logsBox.textContent = data.join("\n");
+          }
+        }
+
+        statusText.textContent = "Done ✅";
+      } catch (err) {
+        logsBox.textContent = "Could not load logs.";
+        statusText.textContent = err.message;
+      }
+    }
+
+    document.getElementById("btnPostgres").addEventListener("click", () => fetchLogs("recent"));
+    document.getElementById("btnFile").addEventListener("click", () => fetchLogs("recent-file"));
+  </script>
+</body>
+</html>
+ 

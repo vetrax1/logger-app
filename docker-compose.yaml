@@ -1,0 +1,56 @@
+services:
+  frontend:
+    image: logger-frontend-image
+    ports:
+      - "8086:80"
+    networks:
+      - logger-net
+    depends_on:
+      - backend
+
+  backend:
+    image: logger-backend-image
+    ports:
+      - "5000:5000"
+    volumes:
+      - logger_logs:/logs
+    environment:
+      - LOG_FILE=/logs/logs.txt
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=loggerdb
+      - DB_USER=loggeruser
+      - DB_PASSWORD=${DB_PASSWORD}
+    networks:
+      - logger-net
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_DB=loggerdb
+      - POSTGRES_USER=loggeruser
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U loggeruser -d loggerdb"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - logger-net
+
+volumes:
+  logger_logs:
+    external: true
+  pgdata:
+    external: true
+
+networks:
+  logger-net:
+    external: true
+
