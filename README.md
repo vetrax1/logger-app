@@ -6,7 +6,7 @@
 
 ## ✨ What this project is
 
-LoggerBuddy is a simple “log message” app used as a learning and portfolio-ready DevOps artifact.
+LoggerBuddy is a simple log message app used as a learning and portfolio-ready DevOps artifact.
 
 It demonstrates:
 
