@@ -4,7 +4,7 @@ on:
   push:
     branches: [ main ]
 
-enviroment:
+environment:
   FRONTEND_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/logger-frontend-image
   BACKEND_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/logger-backend-image
   IMAGE_TAG: ${{ github.run_number }}
