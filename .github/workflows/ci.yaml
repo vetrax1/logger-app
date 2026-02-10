@@ -12,8 +12,23 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      
+      - name: Install pip
+        run: |
+          python -m ensurepip --upgrade
+          python -m pip install --upgrade pip
+
       - name: Test Backend
-        run:
+        run: |
+          cd backend
+          python3 -m venv venv
+          source venv/bin/activate
+          pip install -r requirements.txt
+          flake8 app.py
 
       - name: Image Build
         run: 
@@ -22,4 +37,4 @@ jobs:
         run:
 
       - name: Push to Registry
-        run:
+        run: 
