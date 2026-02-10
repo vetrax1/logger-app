@@ -5,8 +5,8 @@ on:
     branches: [ main ]
 
 env:
-  FRONTEND_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/logger-frontend-image
-  BACKEND_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/logger-backend-image
+  FRONTEND_IMAGE: ${{ secrets.DOCKER_USERNAME }}/logger-frontend-image
+  BACKEND_IMAGE: ${{ secrets.DOCKER_USERNAME }}/logger-backend-image
   IMAGE_TAG: ${{ github.run_number }}
 
 jobs:
