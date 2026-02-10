@@ -107,7 +107,7 @@
   <div class="container">
     <h2>LoggerBuddy 📘</h2>
 
-    <form action="http://192.168.199.136:5000/log" method="POST">
+    <form action="http://192.168.199.128:5000/log" method="POST">
       <input type="text" name="message" placeholder="Enter your log message..." required />
       <button type="submit">Submit Log</button>
     </form>
@@ -140,7 +140,7 @@
         statusText.textContent = "Loading...";
         logsBox.textContent = "";
 
-        const res = await fetch(`http://192.168.199.136:5000/${endpoint}`);
+        const res = await fetch(`http://192.168.199.128:5000/${endpoint}`);
         if (!res.ok) {
           const txt = await res.text();
           throw new Error(`Backend error (${res.status}): ${txt}`);
