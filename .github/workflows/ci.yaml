@@ -1,0 +1,25 @@
+name: Logger-App CI Workflow
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  CI:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Test Backend
+        run:
+
+      - name: Image Build
+        run: 
+
+      - name: Image Scan
+        run:
+
+      - name: Push to Registry
+        run:
