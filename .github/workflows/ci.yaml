@@ -40,8 +40,8 @@ jobs:
 
       - name: Image Build
         run: |
-          docker build -t $FRONTEND_IMAGE:$IMAGE_TAG frontend
-          docker build -t $BACKEND_IMAGE:$IMAGE_TAG backend
+          docker build -t $FRONTEND_IMAGE:$IMAGE_TAG -f frontend/Dockerfile
+          docker build -t $BACKEND_IMAGE:$IMAGE_TAG -f backend/Dockerfile
 
       - name: Image Scan
         run:
