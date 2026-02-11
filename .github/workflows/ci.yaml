@@ -7,7 +7,6 @@ on:
 env:
   FRONTEND_IMAGE: ${{ secrets.DOCKER_USERNAME }}/logger-frontend-image
   BACKEND_IMAGE: ${{ secrets.DOCKER_USERNAME }}/logger-backend-image
-  IMAGE_TAG: ${{ github.sha }}
 
 jobs:
   CI:
@@ -17,6 +16,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
+      - name: Set Image Tag (short SHA)
+        run: echo "IMAGE_TAG=sha-${GITHUB_SHA::7}" >> $GITHUB_ENV
+        
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
@@ -40,8 +42,8 @@ jobs:
 
       - name: Image Build
         run: |
-          docker build -t $FRONTEND_IMAGE:$IMAGE_TAG -f frontend/Dockerfile frontend
-          docker build -t $BACKEND_IMAGE:$IMAGE_TAG -f backend/Dockerfile backend
+          docker build -t $FRONTEND_IMAGE:${{ env.IMAGE_TAG }} -f frontend/Dockerfile frontend
+          docker build -t $BACKEND_IMAGE:${{ env.IMAGE_TAG }} -f backend/Dockerfile backend
 
       - name: Install Node.js
         uses: actions/setup-node@v3
@@ -56,11 +58,11 @@ jobs:
 
       - name: Image Scan
         run: |
-          snyk container test $FRONTEND_IMAGE:$IMAGE_TAG --severity-threshold=critical --file=frontend/Dockerfile
-          snyk container test $BACKEND_IMAGE:$IMAGE_TAG --severity-threshold=critical --file=backend/Dockerfile
+          snyk container test $FRONTEND_IMAGE:${{ env.IMAGE_TAG }} --severity-threshold=critical --file=frontend/Dockerfile
+          snyk container test $BACKEND_IMAGE:$${{ env.IMAGE_TAG }} --severity-threshold=critical --file=backend/Dockerfile
 
       - name: Push to Registry
         run: |
           echo ${{ secrets.DOCKER_TOKEN }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
-          docker push $FRONTEND_IMAGE:$IMAGE_TAG
-          docker push $BACKEND_IMAGE:$IMAGE_TAG 
+          docker push $FRONTEND_IMAGE:${{ env.IMAGE_TAG }}
+          docker push $BACKEND_IMAGE:${{ env.IMAGE_TAG }} 
