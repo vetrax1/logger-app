@@ -59,7 +59,7 @@ jobs:
       - name: Image Scan
         run: |
           snyk container test $FRONTEND_IMAGE:${{ env.IMAGE_TAG }} --severity-threshold=critical --file=frontend/Dockerfile
-          snyk container test $BACKEND_IMAGE:$${{ env.IMAGE_TAG }} --severity-threshold=critical --file=backend/Dockerfile
+          snyk container test $BACKEND_IMAGE:${{ env.IMAGE_TAG }} --severity-threshold=critical --file=backend/Dockerfile
 
       - name: Push to Registry
         run: |
