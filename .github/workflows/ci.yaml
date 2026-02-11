@@ -43,8 +43,21 @@ jobs:
           docker build -t $FRONTEND_IMAGE:$IMAGE_TAG -f frontend/Dockerfile frontend
           docker build -t $BACKEND_IMAGE:$IMAGE_TAG -f backend/Dockerfile backend
 
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install Snyk CLI
+        run: npm install -g snyk
+
+      - name: Authenticate Snyk
+        run: snyk auth ${{ secrets.SNYK_TOKEN }}
+
       - name: Image Scan
-        run:
+        run: |
+          snyk container test $FRONTEND_IMAGE:$IMAGE_TAG --severity-threshold=critical --file=frontend/Dockerfile
+          snyk container test $BACKEND_IMAGE:$IMAGE_TAG --severity-threshold=critical --file=backend/Dockerfile
 
       - name: Push to Registry
         run: 
