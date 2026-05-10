@@ -77,7 +77,7 @@ jobs:
       - name: Update image tag in GitOps manifest
         run: |
           set -e
-          FILE="gitops/frontend/frontend-deploy.yaml"
+          FILE="gitops/frontend/deployment.yaml"
 
           echo "Updating image in $FILE to tag ${IMAGE_TAG}"
 
