@@ -73,6 +73,7 @@ jobs:
         with:
           repository: vetrax1/loggerapp-gitops
           token: ${{ secrets.GIT_TOKEN }}
+          path: gitops
 
       - name: show GitOps repo files
         run: |
