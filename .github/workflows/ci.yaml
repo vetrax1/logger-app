@@ -74,6 +74,11 @@ jobs:
           repository: vetrax1/loggerapp-gitops
           token: ${{ secrets.GIT_TOKEN }}
 
+      - name: show GitOps repo files
+        run: |
+          ls -la gitops
+          ls -la gitops/frontend
+
       - name: Update image tag in GitOps manifest
         run: |
           set -e
